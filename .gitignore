@@ -3,3 +3,5 @@ fonts/*.otf
 fonts/*.TTF
 fonts/*.OTF
 server.*
+images/*
+images/
