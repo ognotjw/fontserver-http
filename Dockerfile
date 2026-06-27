@@ -22,10 +22,6 @@ WORKDIR /app
 # Copy the application script
 COPY fontserver.py .
 
-# Copy  SSL certificate
-COPY server.crt .
-COPY server.key .
-
 # Expose the HTTP port
 EXPOSE 5000
 
