@@ -1,6 +1,4 @@
-Note: this is the HTTP-only fork for the CollaboraOnline/fontserver meant to be used with a reverse proxy. 
-
-READ THE INSTRUCTIONS because there are major changes in deployment.
+Important: This is an HTTP-only fork of the CollaboraOnline/fontserver designed to work behind a reverse proxy. Read the setup instructions carefully because deployment has changed.
 
 # HTTP Simple Fontserver for Collabora Online
 
@@ -9,7 +7,7 @@ This is a simple Flask-based application that serves font files for Collabora On
 **Note:** This application is not for production, only for development and testing.
 ## Prerequisites
 - Docker
-- Reverse Proxy (for https; certificates are easier to manage)
+- Reverse proxy (handles HTTPS and certificate management)
 - Domain/subdomain for the reverse proxy (even Duckdns works)
 ## Build and Run:
 ### Step 0: Clone this repository
@@ -18,21 +16,23 @@ Run on the machine that will be running fontserver:
 `git clone https://github.com/ognotjw/fontserver-http.git`
 
 ### Step 1: Copy font files to `fonts/` subdirectory.
-TrueType and OpenType fonts are supported. The file names and file extensions are case-insensitive, so e.g. both `TTF` and `ttf` extensions are allowed. DO NOT use subdirectories.
+Place your font files in the fonts/ subdirectory:
+- Supported formats: TrueType and OpenType
+- Do not use subdirectories—place all fonts directly in fonts/
+- File names and extensions are case-insensitive (both TTF and ttf work)
 
 ### Step 2: Build the Docker image
-To build the Docker image, run the following command:
-
 ```bash
 sudo docker build -t fontserver .
 ```
 ### Step 3: Set up your reverse proxy
-Configure your reverse proxy to forward requests for fonts.example.com (your domain/subdomain) to the IP of the server running the `fontserver` Docker container. Enable HTTPS by installing an SSL certificate; Collabora requires HTTPS to connect.
+Point your reverse proxy (e.g., fonts.example.com) to the fontserver host's IP address on port 5000. Enable HTTPS with an SSL certificate. Collabora requires it.
 
-Example with Nginx Proxy Manager: ![](npm.png) ![](npm2.png)
+Example with Nginx Proxy Manager:
+![](npm.png) ![](npm2.png)
 
 ### Step 4: Run the Docker container
-**IMPORTANT:** change the `SERVER_BASE_URL` (this entire thing: fonts.example.com) environment variable to the one you set up in your reverse proxy. The built-in value is `https://127.0.0.1:5000`
+**IMPORTANT:** Replace `https://fonts.example.com` with your actual reverse proxy domain in the `-e SERVER_BASE_URL` environment variable. The default value is `https://127.0.0.1:5000`.
 
 To run the container and mount your `fonts/` directory, use the following command:
 ```bash
@@ -43,18 +43,20 @@ This will:
 - Start the Flask application on port 5000.
 - Mount the `fonts/` directory from your host to `/app/fonts` in the container.
 
-Do not remove the fonts directory after deploying your container.
+Do not remove the `fonts/` directory after deployment.
 
 
 ### Step 5: Set up Collabora to use this fontserver
-- Either pass this setting in the command line, for example when you start a `collabora/code` container, in the `extra_params` environment variable add:
+#### Option A: Environment Variable (Recommended)
+- Pass this setting in the command line, for example when you start a `collabora/code` container, in the `extra_params` environment variable add:
 
 ```
 --o:remote_font_config.url=https://fonts.example.com/fonts.json
 ```
 Where the url is the one from the reverse proxy.
 
-- Or in `/etc/coolwsd/coolwsd.xml` set the `<remote_font_config>`, for example:
+#### Option B: Configuration File
+- In `/etc/coolwsd/coolwsd.xml` set the `<remote_font_config>`, for example:
 
 ```xml
 <remote_font_config>
