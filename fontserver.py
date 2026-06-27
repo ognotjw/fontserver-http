@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 FONT_DIR = "/app/fonts"
 JSON_FILE = "fonts.json"
-SERVER_BASE_URL = os.getenv("SERVER_BASE_URL", "https://127.0.0.1:5000")
+SERVER_BASE_URL = os.getenv("SERVER_BASE_URL", "http://127.0.0.1:5000")
 
 def generate_md5(filepath):
     hash_md5 = hashlib.md5()
@@ -53,6 +53,6 @@ def serve_fonts_json():
 
 if __name__ == "__main__":
     generate_fonts_json()
-    app.run(host="0.0.0.0", port=5000, ssl_context=('server.crt', 'server.key'))
+    app.run(host="0.0.0.0", port=5000)
 
 # vim: set shiftwidth=4 softtabstop=4 expandtab:
