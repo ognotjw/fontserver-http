@@ -3,5 +3,5 @@ fonts/*.otf
 fonts/*.TTF
 fonts/*.OTF
 server.*
-images/*
-images/
+npm.png
+npm2.png
